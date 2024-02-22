@@ -64,12 +64,14 @@ export function setTokenCookie(
   if (tokenType === "access") {
     res.cookie("jwtAccessToken", token, {
       httpOnly: true,
-      maxAge: 5 * 60 * 1000,
+      secure: true,
+      maxAge: 15 * 60 * 1000,
     });
     return;
   } else {
     res.cookie("jwtRefreshToken", token, {
       httpOnly: true,
+      secure: true,
       maxAge: 30 * 60 * 1000,
     });
   }
