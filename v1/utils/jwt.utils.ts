@@ -1,6 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Response } from "express";
 import config from "config";
+import { checkBlackListedToken } from "../service/blacklist.service";
 
 const accessTokenPrivateKey = config.get<string>("JWT.jwtAccessTokenPrivateKey");
 const accessTokenPublicKey = config.get<string>("JWT.jwtAccessTokenPublicKey");
@@ -25,7 +26,17 @@ export function signJwt(
   });
 }
 
-export function verifyJwt(token: string, tokenType: "refresh" | "access") {
+export async function verifyJwt(token: string, tokenType: "refresh" | "access") {
+  const blackListed = await checkBlackListedToken(token);
+
+  if (blackListed) {
+    return {
+      valid: false,
+      expired: false,
+      decoded: null,
+    };
+  }
+
   try {
     const key =
       tokenType === "access" ? accessTokenPublicKey : refreshTokenPublicKey;
@@ -53,13 +64,13 @@ export function setTokenCookie(
   if (tokenType === "access") {
     res.cookie("jwtAccessToken", token, {
       httpOnly: true,
-      maxAge: 15 * 60 * 1000,
+      maxAge: 5 * 60 * 1000,
     });
     return;
   } else {
     res.cookie("jwtRefreshToken", token, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 30 * 60 * 1000,
     });
   }
 }

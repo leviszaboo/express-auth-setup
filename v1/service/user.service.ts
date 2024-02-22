@@ -141,7 +141,7 @@ export async function createUser(input: UserInput) {
 }
 
 export async function reissueAccessToken(refreshToken: string) {
-  const { decoded } = verifyJwt(refreshToken, "refresh");
+  const { decoded } = await verifyJwt(refreshToken, "refresh");
 
   if (!decoded)
     return {
@@ -176,3 +176,4 @@ export async function reissueAccessToken(refreshToken: string) {
     newRefreshToken: newRefreshToken,
   };
 }
+

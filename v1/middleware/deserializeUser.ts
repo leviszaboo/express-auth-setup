@@ -20,7 +20,7 @@ export async function deserializeUser(
     return next();
   }
 
-  const { decoded, expired } = verifyJwt(accessToken, "access");
+  const { decoded, expired } = await verifyJwt(accessToken, "access");
 
   if (decoded) {
     res.locals.user = decoded;
@@ -40,7 +40,7 @@ export async function deserializeUser(
 
     setTokenCookie(res, newRefreshToken, "refresh");
 
-    const result = verifyJwt(newAccessToken, "access");
+    const result = await verifyJwt(newAccessToken, "access");
     res.locals.user = result.decoded;
   }
 

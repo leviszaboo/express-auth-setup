@@ -8,7 +8,7 @@ export default function requireUser(
   const user = res.locals.user;
 
   if (!user) {
-    return res.sendStatus(403);
+    return res.status(401).send("Unauthorized");
   }
 
   return next();
